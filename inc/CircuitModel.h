@@ -50,9 +50,9 @@ class CircuitModel
     CircuitModel(const CircuitModel& other);
     CircuitModel& operator=( CircuitModel rhs );
     
-    void process(const float * input, float * output, int numSamples, int channel);
+    void process(const float * input, float * output, int channel, int numSamples);
     
-    void processInPlace(float * buffer, int numSamples, int channel);
+    void processInPlace(float * buffer, int channel, int numSamples);
     
     float processSample(float x, int channel);
     

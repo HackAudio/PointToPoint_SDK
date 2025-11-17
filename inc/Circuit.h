@@ -19,11 +19,11 @@ public:
     
     virtual ~CircuitProcessor() {};
     
-    virtual void process(const float* input, float* output, int c, int numSamples) = 0;
+    virtual void process(const float* input, float* output, int channel, int numSamples) = 0;
     
-    virtual void processInPlace(float* buffer, int c, int numSamples) = 0;
+    virtual void processInPlace(float* buffer, int channel, int numSamples) = 0;
     
-    virtual float processSample(float x, int c) = 0;
+    virtual float processSample(float x, int channel) = 0;
     
     virtual void prepare(double sampleRate, int bufferSize) = 0;
     
@@ -44,14 +44,14 @@ class Circuit : public CircuitProcessor
 {
 public:
     
-    void process(const float * input, float * output, int numSamples, int channel)
+    void process(const float * input, float * output, int channel, int numSamples)
     {
-        circuit.process(input,output,numSamples,channel);
+        circuit.process(input,output,channel,numSamples);
     }
     
-    void processInPlace(float* buffer, int numSamples, int channel)
+    void processInPlace(float* buffer, int channel, int numSamples)
     {
-        circuit.processInPlace(buffer,numSamples,channel);
+        circuit.processInPlace(buffer,channel,numSamples);
     }
     
     float processSample(float x, int channel)
@@ -98,21 +98,21 @@ public:
     
     virtual ~CircuitChain() {};
     
-    void process(const float * input, float * output, int c, int numSamples) override {
-        circuitChain[0]->process(input,output,c,numSamples);
+    void process(const float * input, float * output, int channel, int numSamples) override {
+        circuitChain[0]->process(input,output,channel,numSamples);
         float * pInput = output;
         for (int m = 1; m < circuitChain.size() ; ++m)
-            circuitChain[m]->process(pInput,output,c,numSamples);
+            circuitChain[m]->process(pInput,output,channel,numSamples);
     }
     
-    void processInPlace(float* buffer, int c, int numSamples) override {
+    void processInPlace(float* buffer, int channel, int numSamples) override {
         for (int m = 0; m < circuitChain.size() ; ++m)
-            circuitChain[m]->processInPlace(buffer,c,numSamples);
+            circuitChain[m]->processInPlace(buffer,channel,numSamples);
     }
     
-    float processSample(float x, int c) override {
+    float processSample(float x, int channel) override {
         for (int m = 0; m < circuitChain.size() ; ++m)
-            x = circuitChain[m]->processSample(x,c);
+            x = circuitChain[m]->processSample(x,channel);
         
         return x;
     }
